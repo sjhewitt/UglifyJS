@@ -15,6 +15,7 @@ var options = {
         squeeze: true,
         make_seqs: true,
         dead_code: true,
+        no_console: false,
         verbose: false,
         show_copyright: true,
         out_same_file: false,
@@ -75,6 +76,9 @@ out: while (args.length > 0) {
                 break;
             case "--no-dead-code":
                 options.dead_code = false;
+                break;
+            case "--no-console":
+                options.no_console = true;
                 break;
             case "--no-copyright":
             case "-nc":
@@ -280,6 +284,9 @@ function squeeze_it(code) {
                 var ast = time_it("parse", function(){ return jsp.parse(code); });
                 if (options.lift_vars) {
                         ast = time_it("lift", function(){ return pro.ast_lift_variables(ast); });
+                }
+                if (options.no_console) {
+                        ast = time_it("lift", function(){ return pro.ast_squeeze_console(ast); });
                 }
                 if (options.mangle) ast = time_it("mangle", function(){
                         return pro.ast_mangle(ast, {

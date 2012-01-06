@@ -9,11 +9,14 @@ var Script = process.binding('evals').Script;
 
 var scriptsPath = __dirname;
 
-function compress(code) {
+function compress(code, squeezeConsole) {
 	var ast = jsp.parse(code);
 	ast = pro.ast_mangle(ast);
+	if(squeezeConsole) {
+		ast = pro.ast_squeeze_console(ast);
+	}
 	ast = pro.ast_squeeze(ast, { no_warnings: true });
-        ast = pro.ast_squeeze_more(ast);
+	ast = pro.ast_squeeze_more(ast);
 	return pro.gen_code(ast);
 };
 
@@ -25,13 +28,13 @@ function getTester(script) {
 		var testPath = path.join(testDir, script);
 		var expectedPath = path.join(expectedDir, script);
 		var content = fs.readFileSync(testPath, 'utf-8');
-		var outputCompress = compress(content);
+		var outputCompress = compress(content, script==="console.js");
 
 		// Check if the noncompressdata is larger or same size as the compressed data
 		test.ok(content.length >= outputCompress.length);
 
 		// Check that a recompress gives the same result
-		var outputReCompress = compress(content);
+		var outputReCompress = compress(content, script==="console.js");
 		test.equal(outputCompress, outputReCompress);
 
 		// Check if the compressed output is what is expected
