@@ -286,7 +286,7 @@ function squeeze_it(code) {
                         ast = time_it("lift", function(){ return pro.ast_lift_variables(ast); });
                 }
                 if (options.no_console) {
-                        ast = time_it("lift", function(){ return pro.ast_squeeze_console(ast); });
+                        ast = time_it("console", function(){ return pro.ast_squeeze_console(ast); });
                 }
                 if (options.mangle) ast = time_it("mangle", function(){
                         return pro.ast_mangle(ast, {
